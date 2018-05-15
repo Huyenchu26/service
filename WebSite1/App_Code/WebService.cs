@@ -40,7 +40,7 @@ public class WebService : System.Web.Services.WebService
 
         string[] timestamp_part = timestamp_str.Split('-');
         DateTime parsed_date = DateTime.Now;
-        foreach(string date_format in date_format_list)
+        foreach (string date_format in date_format_list)
             if (DateTime.TryParseExact(timestamp_part[1], date_format, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed_date))
                 break;
         timestamp_part[1] = parsed_date.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
@@ -94,9 +94,9 @@ public class WebService : System.Web.Services.WebService
     }
 
 
-    // return json object
+    // return lastest record
     [WebMethod]
-    public List<String> parse_file() 
+    public List<String> parse_file()
     {
         List<String> listJson = new List<string>();
         string[] listFile = ProcessDirectory(Config.PathFile);
@@ -106,8 +106,8 @@ public class WebService : System.Web.Services.WebService
             var filestream = new System.IO.FileStream(Config.PathFile + listFile[i], System.IO.FileMode.Open);
             var file = new System.IO.StreamReader(filestream);
             string line_of_text;
-            do 
-                // chua handle error
+            do
+            // chua handle error
             {
                 Dictionary<string, Dictionary<string, string>> record = new Dictionary<string, Dictionary<string, string>>();
                 line_of_text = file.ReadLine();
@@ -128,6 +128,14 @@ public class WebService : System.Web.Services.WebService
             //return (new JavaScriptSerializer()).Serialize(file_data);
         }
         return listJson;
+    }
+
+    // input khoảng thời gian
+    [WebMethod]
+    public String getHistory(String startDate, String endDate) {
+
+
+        return startDate + " - " + endDate;
     }
 }
 
