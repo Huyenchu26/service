@@ -43,7 +43,7 @@ public class WebService : System.Web.Services.WebService
 
     // return lastest record
     [WebMethod]
-    public List<String> parse_file()
+    public String parse_file()
     {
         List<String> listJson = new List<string>();
         string[] listFile = ProcessDirectory(Config.PathFile);
@@ -70,28 +70,30 @@ public class WebService : System.Web.Services.WebService
             } while (true);
             filestream.Close();
 
-            listJson.Add(JsonConvert.SerializeObject(file_data));
+            return JsonConvert.SerializeObject(file_data);
+            //listJson.Add(JsonConvert.SerializeObject(file_data));
 
             //listJson.Add((new JavaScriptSerializer()).Serialize(file_data));
             //return (new JavaScriptSerializer()).Serialize(file_data);
         }
 
-        return listJson;
+        return "";
     }
 
 
     // input khoảng thời gian
     [WebMethod]
-    public List<String> getHistory(String imei, String startDate, String endDate)
+    public String getHistory(String imei, String startDate, String endDate)
     {
-        List<String> listJson = new List<string>();
+        List<Dictionary<string, Dictionary<string, string>>> file_data = new List<Dictionary<string, Dictionary<string, string>>>();
+        //List<String> listJson = new List<string>();
         String[] imeiArray = ProcessDirectory(Config.PathFile);
         for (int i = 0; i < imeiArray.Length; i++)
         {
-            if (imeiArray[i].Equals(imei))
+            if (imeiArray[i].Split('.')[0].Equals(imei))
             {
 
-                List<Dictionary<string, Dictionary<string, string>>> file_data = new List<Dictionary<string, Dictionary<string, string>>>();
+                //List<Dictionary<string, Dictionary<string, string>>> file_data = new List<Dictionary<string, Dictionary<string, string>>>();
                 var filestream = new System.IO.FileStream(Config.PathFile + imeiArray[i], System.IO.FileMode.Open);
                 var file = new System.IO.StreamReader(filestream);
                 string line_of_text;
@@ -109,11 +111,6 @@ public class WebService : System.Web.Services.WebService
                     record["data"] = LimitData.extract_data(line_of_text);
 
                     DateTime curDate = stringToDate(line_of_text.Split(',')[1]);
-                    System.Diagnostics.Debug.WriteLine(">>>>>>>>>>>>>>>>>");
-                    System.Diagnostics.Debug.WriteLine(">>>>>>>>>>>>>>>>>");
-                    System.Diagnostics.Debug.WriteLine(">>>>>>>>>>>>>>>>>");
-                    System.Diagnostics.Debug.WriteLine("Huyenchu: " + line_of_text.Split(',')[1] + " = " + DateToTimestamp(curDate, stringToDate(startDate)));
-
 
                     if (DateToTimestamp(curDate, stringToDate(startDate)) >= 0
                         && DateToTimestamp(stringToDate(endDate), curDate) >= 0)
@@ -125,10 +122,11 @@ public class WebService : System.Web.Services.WebService
                 } while (true);
                 filestream.Close();
 
-                listJson.Add(JsonConvert.SerializeObject(file_data));
+                //listJson.Add(JsonConvert.SerializeObject(file_data));
             }
+            else System.Diagnostics.Debug.WriteLine("Huyenchu imeiArray: " + imeiArray[0].ToString() + " " + imeiArray[1].ToString());
         }
-        return listJson;
+        return JsonConvert.SerializeObject(file_data);
     }
 
 
