@@ -43,7 +43,7 @@ public class WebService : System.Web.Services.WebService
 
     // return lastest record
     [WebMethod]
-    public String parse_file()
+    public List<String> parse_file()
     {
         List<String> listJson = new List<string>();
         string[] listFile = ProcessDirectory(Config.PathFile);
@@ -69,15 +69,14 @@ public class WebService : System.Web.Services.WebService
                 file_data.Add(record);
             } while (true);
             filestream.Close();
-
-            return JsonConvert.SerializeObject(file_data);
-            //listJson.Add(JsonConvert.SerializeObject(file_data));
+            
+            listJson.Add(JsonConvert.SerializeObject(file_data));
 
             //listJson.Add((new JavaScriptSerializer()).Serialize(file_data));
             //return (new JavaScriptSerializer()).Serialize(file_data);
         }
 
-        return "";
+        return listJson;
     }
 
 
